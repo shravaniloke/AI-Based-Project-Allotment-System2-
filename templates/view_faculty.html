@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Faculty</title>
+</head>
+<body>
+
+<h2>All Faculty 👨‍🏫</h2>
+
+<table border="1">
+<tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Email</th>
+</tr>
+
+{% for f in faculty %}
+<tr>
+    <td>{{ f[0] }}</td>
+    <td>{{ f[1] }}</td>
+    <td>{{ f[2] }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+<br>
+<a href="/admindashboard">⬅ Back</a>
+
+</body>
+</html>

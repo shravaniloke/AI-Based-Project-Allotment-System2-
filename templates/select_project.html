@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Project</title>
+</head>
+<body>
+
+<h2>Select Project ✅</h2>
+
+<form method="POST">
+
+    <select name="project_id">
+        {% for project in projects %}
+        <option value="{{ project[0] }}">{{ project[1] }}</option>
+        {% endfor %}
+    </select>
+
+    <br><br>
+    <button type="submit">Select</button>
+
+</form>
+
+<br>
+<a href="/studentdashboard">⬅ Back</a>
+
+</body>
+</html>

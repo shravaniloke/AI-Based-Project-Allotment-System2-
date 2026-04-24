@@ -1,0 +1,162 @@
+<!DOCTYPE html> 
+
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+<style>
+    body {
+        background-color: #f4f6f9;
+    }
+    .card {
+        border-radius: 12px;
+    }
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+
+<nav class="navbar bg-dark navbar-dark">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1">Admin Dashboard 🛠️</span>
+    <a href="/" class="btn btn-light">Logout</a>
+  </div>
+</nav>
+
+<div class="container mt-4">
+
+
+<h3 class="text-center">Welcome Admin 👨‍💼</h3>
+<hr>
+
+<!-- 🔥 STATS CARDS -->
+<div class="row text-center mt-4">
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow">
+            <h5>Groups</h5>
+            <h2>{{ total_students }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow">
+            <h5>Projects</h5>
+            <h2>{{ total_projects }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow">
+            <h5>Submissions</h5>
+            <h2>{{ total_submissions }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 shadow">
+            <h5>Evaluated</h5>
+            <h2>{{ evaluated }}</h2>
+        </div>
+    </div>
+
+</div>
+
+<!-- 🔥 CHART SECTION -->
+<div class="card mt-5 p-4 shadow text-center">
+    <h4>📊 Submission Overview</h4>
+<div style="width: 250px; height: 250px; margin: auto;">
+    <canvas id="submissionChart"></canvas>
+</div></div>
+
+<!-- First Row -->
+<div class="row g-4 justify-content-center mt-4">
+
+    <div class="col-md-4">
+        <div class="card text-center shadow h-100">
+            <div class="card-body">
+                <h5>Students</h5>
+                <p>View all registered students</p>
+                <a href="/viewstudents" class="btn btn-primary">View</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-center shadow h-100">
+            <div class="card-body">
+                <h5>Faculty</h5>
+                <p>View faculty members</p>
+                <a href="/viewfaculty" class="btn btn-success">View</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-center shadow h-100">
+            <div class="card-body">
+                <h5>Projects</h5>
+                <p>View all projects</p>
+                <a href="/viewprojectsforadmin" class="btn btn-warning">View</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Second Row -->
+<div class="row g-4 justify-content-center mt-3">
+
+    <div class="col-md-4">
+        <div class="card text-center shadow h-100">
+            <div class="card-body">
+                <h5>Allotments</h5>
+                <p>Check project allotments</p>
+                <a href="/viewallotments" class="btn btn-danger">View</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-center shadow h-100">
+            <div class="card-body">
+                <h5>Marks</h5>
+                <p>View student marks</p>
+                <a href="/viewmarks" class="btn btn-info">View</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</div>
+
+<!-- Chart.js -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- 🔥 CHART SCRIPT -->
+
+<script>
+const ctx = document.getElementById('submissionChart');
+
+new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: ['Submitted', 'Not Submitted'],
+        datasets: [{
+            data: [{{ total_submissions }}, {{ not_submitted }}]
+        }]
+    },
+    options: {   // ✅ NOW INSIDE
+        responsive: true,
+        maintainAspectRatio: false
+    }
+});
+</script>
+
+</body>
+</html>
