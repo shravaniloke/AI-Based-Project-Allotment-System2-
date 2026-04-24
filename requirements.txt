@@ -1,2 +1,8 @@
 flask
 scikit-learn
+Flask
+mysql-connector-python
+nltk
+scikit-learn
+PyPDF2
+Werkzeug
