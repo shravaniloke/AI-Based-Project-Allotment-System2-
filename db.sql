@@ -59,13 +59,12 @@ INSERT INTO admin (username, email, password)
 VALUES ('Admin', 'admin@gmail.com', 'admin123');
 
 -- =====================================
--- ALLOTMENTS TABLE
+-- ALLOTMENTS TABLE (UPDATED)
 -- =====================================
 CREATE TABLE allotments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     student_id INT NOT NULL,
     project_id INT NOT NULL,
-    status VARCHAR(50) DEFAULT 'Pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (student_id) REFERENCES students(id)
