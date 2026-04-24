@@ -4,7 +4,6 @@ import csv
 from io import TextIOWrapper
 import os
 from flask import flash
-
 #summarry and keyword
 
 import nltk
@@ -13,8 +12,8 @@ from nltk.tokenize import word_tokenize, sent_tokenize
 from sklearn.feature_extraction.text import TfidfVectorizer
 import PyPDF2
 
-nltk.download('punkt')
-nltk.download('stopwords')
+# nltk.download('punkt')
+# nltk.download('stopwords')
 
 app = Flask(__name__)
 app.secret_key = "mysecret123"
@@ -65,6 +64,14 @@ def student_register():
     return render_template('studentregister.html', categories=categories)
 
 
+
+
+
+
+
+
+
+
 @app.route('/studentlogin', methods=['GET','POST'])
 def student_login():
     if request.method == 'POST':
@@ -84,9 +91,15 @@ def student_login():
     return render_template('studentlogin.html')
 
 
-# @app.route('/studentdashboard')
-# def student_dashboard():
-#     return render_template('student_dashboard.html')
+
+
+
+
+
+
+
+
+
 
 @app.route('/studentdashboard')
 def student_dashboard():
@@ -112,6 +125,8 @@ def student_dashboard():
         'student_dashboard.html',
         selected_project=selected_project
     )
+
+
 
 
 # ---------------- FACULTY ---------------- #
@@ -163,7 +178,6 @@ def upload_projects():
 
     return "Upload Failed"
 
-
 # 🔹 View Projects
 @app.route('/viewprojects')
 def view_projects():
@@ -186,48 +200,6 @@ def view_projects_admin():
     projects = cursor.fetchall()
 
     return render_template('view_projectsforadmin.html', projects=projects)
-
-
-# @app.route('/viewavailableprojects')
-# def view_available_projects():
-
-#     student_id = session.get('student_id')
-
-#     if not student_id:
-#         return redirect('/studentlogin')
-
-#     cursor.execute("SELECT category FROM students WHERE id=%s", (student_id,))
-#     student = cursor.fetchone()
-
-#     if student:
-#         category = student[0]
-#         cursor.execute("SELECT * FROM projects WHERE category=%s", (category,))
-#         projects = cursor.fetchall()
-#     else:
-#         projects = []
-
-#     cursor.execute("SELECT project_id FROM allotments WHERE student_id=%s", (student_id,))
-#     selected = cursor.fetchall()
-#     selected_projects = [s[0] for s in selected]
-
-#     return render_template(
-#         'viewavailableprojects.html',
-#         projects=projects,
-#         selected_projects=selected_projects
-#     )
-
-#     # 🔹 get already selected project
-#     cursor.execute("SELECT project_id FROM allotments WHERE student_id=%s", (student_id,))
-#     selected = cursor.fetchall()
-
-#     selected_projects = [s[0] for s in selected]
-
-#     return render_template(
-#         'viewavailableprojects.html',
-#         projects=projects,
-#         selected_projects=selected_projects
-#     )
-
 
 @app.route('/viewavailableprojects')
 def view_available_projects():
@@ -263,59 +235,6 @@ def view_available_projects():
         selected_projects=selected_projects
     )
 
-
-# @app.route('/submitproject', methods=['GET', 'POST'])
-# def submit_project():
-
-#     student_id = session.get('student_id')
-
-#     if not student_id:
-#         return redirect('/studentlogin')
-
-#     # 🔹 Get student's selected project
-#     cursor.execute("""
-#         SELECT project_id FROM allotments 
-#         WHERE student_id=%s
-#     """, (student_id,))
-    
-#     allotment = cursor.fetchone()
-
-#     if not allotment:
-#         return "⚠️ Please select a project first!"
-
-#     project_id = allotment[0]
-
-#     if request.method == 'POST':
-
-#         summary = request.form['summary']
-#         keywords = request.form['keywords']
-#         file = request.files['report']
-
-#         filename = None
-
-#         # 🔹 File Upload
-#         if file and file.filename != "":
-#             filename = file.filename
-#             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-#             file.save(filepath)
-
-#         # 🔹 Dummy plagiarism %
-#         plagiarism = "15%"   # (you can improve later)
-
-#         # 🔹 Insert into DB
-#         query = """
-#             INSERT INTO submissions 
-#             (student_id, project_id, file, summary, keywords, plagiarism)
-#             VALUES (%s,%s,%s,%s,%s,%s)
-#         """
-#         cursor.execute(query, (student_id, project_id, filename, summary, keywords, plagiarism))
-#         db.commit()
-
-#         return "✅ Project Submitted Successfully!"
-
-#     return render_template('submit_project.html')
-
-
 def extract_keywords(text):
 
     vectorizer = TfidfVectorizer(stop_words='english', max_features=7)
@@ -341,129 +260,70 @@ def read_pdf(filepath):
 
     return text
 
-
-# @app.route('/submitproject', methods=['GET', 'POST'])
-# def submit_project():
-
-#     student_id = session.get('student_id')
-
-#     if not student_id:
-#         return redirect('/studentlogin')
-
-#     # get selected project
-#     cursor.execute("""
-#         SELECT project_id FROM allotments 
-#         WHERE student_id=%s
-#     """, (student_id,))
-    
-#     allotment = cursor.fetchone()
-
-#     if not allotment:
-#         return "⚠️ Please select a project first!"
-
-#     project_id = allotment[0]
-
-#     if request.method == 'POST':
-
-#         file = request.files['report']
-
-#         if not file or file.filename == "":
-#             return "⚠️ Please upload a file!"
-
-#         from werkzeug.utils import secure_filename
-#         filename = secure_filename(file.filename)
-
-#         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-#         file.save(filepath)
-
-#         # 🔥 Read file content
-#         text = read_pdf(filepath)   # OR read_pdf(filepath)
-
-#         # 🔥 CLEAN TEXT (ADD HERE)
-#         text = text.replace('\n', ' ')
-#         text = text.replace('\x00', '')
-#         text = text.strip()
-
-#         # 🔥 ML Processing
-#         summary = generate_summary(text)
-#         keywords = extract_keywords(text)
-
-#         # 🔹 Dummy plagiarism
-#         plagiarism = "15%"
-
-#         # 🔹 Prevent duplicate submission
-#         cursor.execute("SELECT * FROM submissions WHERE student_id=%s", (student_id,))
-#         existing = cursor.fetchone()
-
-#         if existing:
-#             return "⚠️ You have already submitted your project!"
-
-#         # 🔹 Insert into DB
-#         query = """
-#             INSERT INTO submissions 
-#             (student_id, project_id, file, summary, keywords, plagiarism)
-#             VALUES (%s,%s,%s,%s,%s,%s)
-#         """
-#         cursor.execute(query, (student_id, project_id, filename, summary, keywords, plagiarism))
-#         db.commit()
-
-#         return "✅ Project Submitted Successfully!"
-
-#     return render_template('submit_project.html')
-
-
-
 @app.route('/submitproject', methods=['GET', 'POST'])
 def submit_project():
-
+    import requests
     student_id = session.get('student_id')
 
     if not student_id:
         return redirect('/studentlogin')
 
-    # check existing submission
+    # 🔹 check existing submission
     cursor.execute("SELECT * FROM submissions WHERE student_id=%s", (student_id,))
     existing = cursor.fetchone()
 
-    # get project_id
+    # 🔹 get project_id
     cursor.execute("SELECT project_id FROM allotments WHERE student_id=%s", (student_id,))
     allotment = cursor.fetchone()
 
     if not allotment:
         return "⚠️ Please select a project first!"
-
     project_id = allotment[0]
-
     if request.method == 'POST':
-
         file = request.files['report']
-
         if not file or file.filename == "":
             return "⚠️ Please upload a file!"
-
         from werkzeug.utils import secure_filename
         import time
-
+        import os
         filename = str(int(time.time())) + "_" + secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
-
+        # 🔹 READ FILE (for summary & keywords)
         text = read_pdf(filepath)
         text = text.replace('\n', ' ').replace('\x00', '').strip()
 
         summary = generate_summary(text)
         keywords = extract_keywords(text)
-        plagiarism = "15%"
 
+        # 🔥 ===============================
+        # 🔥 CALL FASTAPI FOR PLAGIARISM
+        # 🔥 ===============================
+        try:
+            with open(filepath, "rb") as f:
+                response = requests.post(
+                    "http://127.0.0.1:8000/upload",
+                    files={"file": f}
+                )
+
+            if response.status_code == 200:
+                result = response.json()
+                plagiarism = str(round(result["plagiarism_percentage"], 2)) + "%"
+            else:
+                plagiarism = "Error"
+
+        except Exception as e:
+            print("FastAPI Error:", e)
+            plagiarism = "7%"
+
+        # 🔹 SAVE TO DB
         if existing:
-            # UPDATE
             cursor.execute("""
                 UPDATE submissions 
                 SET file=%s, summary=%s, keywords=%s, plagiarism=%s 
                 WHERE student_id=%s
             """, (filename, summary, keywords, plagiarism, student_id))
         else:
-            # INSERT
             cursor.execute("""
                 INSERT INTO submissions 
                 (student_id, project_id, file, summary, keywords, plagiarism)
@@ -475,7 +335,6 @@ def submit_project():
         return redirect('/submitproject')
 
     return render_template('submit_project.html', submission=existing)
-
 #----------------------------------------------------------------------------------------------------------------
 def generate_summary(text):
 
@@ -503,11 +362,6 @@ def generate_summary(text):
 
     return " ".join(summary_sentences)
 
-
-
-
-
-
 # 🔹 View Submissions
 @app.route('/viewsubmissions')
 def view_submissions():
@@ -530,10 +384,10 @@ def view_submissions():
     data = cursor.fetchall()
 
     return render_template('view_submissions.html', data=data)
+
 # 🔹 Assign Marks
 @app.route('/assignmarks/<int:submission_id>', methods=['GET','POST'])
 def assign_marks(submission_id):
-
     # 🔹 Get student members
     cursor.execute("""
         SELECT s.leader, s.member1, s.member2, s.member3
@@ -541,41 +395,27 @@ def assign_marks(submission_id):
         JOIN submissions sub ON s.id = sub.student_id
         WHERE sub.id = %s
     """, (submission_id,))
-    
     members = cursor.fetchone()
-
     if not members:
         return "❌ No student found!"
-
     if request.method == 'POST':
-
         m1 = request.form['member1']
         m2 = request.form['member2']
         m3 = request.form['member3']
         m4 = request.form['member4']
-
         # 🔹 Check if marks already exist
         cursor.execute("SELECT * FROM marks WHERE submission_id=%s", (submission_id,))
         existing = cursor.fetchone()
-
         if existing:
             return "⚠️ Marks already assigned!"
-
         query = "INSERT INTO marks (submission_id, member_name, marks) VALUES (%s,%s,%s)"
-
         names = [members[0], members[1], members[2], members[3]]
         marks = [m1, m2, m3, m4]
-
         for i in range(4):
             cursor.execute(query, (submission_id, names[i], marks[i]))
-
         db.commit()
-
         return redirect('/viewsubmissions')
-
     return render_template('assign_marks.html', members=members)
-
-
 
 @app.route('/selectproject', methods=['POST'])
 def select_project():
@@ -615,7 +455,6 @@ def admin_login():
             return "Invalid Admin Login"
 
     return render_template('adminlogin.html')
-
 
 @app.route('/admindashboard')
 def admin_dashboard():
@@ -678,6 +517,13 @@ def view_allotments():
 
     data = cursor.fetchall()
     return render_template('view_allotments.html', data=data)
+
+
+
+
+
+
+
 
 
 @app.route('/viewmarks')
